@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>株式会社　H　保険</title>
+<!-- Bootstrap -->
+<link href="css/customer.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="a11">
+    <!-- 标题 -->
+    <div class="title">保険情報検索</div>
+    <div class="a11_main">
+        <div class="row_container" >
+            <p class="row_title">検索条件</p>
+            <div class="row">
+                <div class="row_div">
+                    <div class="row_name">
+                        <ul>
+                            <li>契約番号</li>
+                        </ul>
+                    </div>
+                    <textarea class="row_input" placeholder="21234567890123456" contenteditable></textarea>
+                </div>
+                <div class="row_div">
+                    <div class="row_name">
+                        <ul>
+                            <li>有効期限</li>
+                        </ul>
+                    </div>
+                    <textarea class="row_input" placeholder="202301" contenteditable></textarea>
+                </div>
+                <div class="row_div">
+                    <div class="row_name">
+                        <ul>
+                            <li>保険ID</li>
+                        </ul>
+                    </div>
+                    <textarea class="row_input" placeholder="2023010101111" contenteditable></textarea>
+                </div>
+
+                <div class="row_div">
+                    <div class="row_name">
+                        <ul>
+                            <li>保険名</li>
+                        </ul>
+                    </div>
+                    <textarea class="row_input" placeholder="生命保険" contenteditable></textarea>
+                </div>
+            </div>
+            <div>
+                <button class="text_s_bt">検索</button> 
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row_title">保険情報</div>
+        <div class="row">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>契約番号</th>
+                        <th>保険ID</th>
+                        <th>保険名</th>
+                        <th>有効期限</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2022100110235485</td>
+                        <td>2022100155021436</td>
+                        <td>生命保険一</td>
+                        <td>20221101～20231031</td>
+                    </tr>
+                    <tr>
+                        <td>2022100110235111</td>
+                        <td>2022100155021356</td>
+                        <td>生命保険二</td>
+                        <td>20221101～20231031</td>
+                    </tr>
+                    <tr>
+                        <td>2022100110287453</td>
+                        <td>2022100155023431</td>
+                        <td>生命保険三</td>
+                        <td>20221101～20231031</td>
+                    </tr>
+                    <tr>
+                        <td>2022110110235001</td>
+                        <td>2022100155021544</td>
+                        <td>生命保険四</td>
+                        <td>20221101～20231031</td>
+                    </tr>
+                    <tr>
+                        <td>2022120110238885</td>
+                        <td>2022100155022344</td>
+                        <td>生命保険五</td>
+                        <td>20221101～20231031</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr>
+        <div class="text-center">
+            <button class="text_bt">戻る</button> 
+        </div>
+        <div class="text-center">
+            <div class="text-center col-lg-6 offset-lg-3">
+                <p>Copyright &copy; H &middot; All Rights Reserved &middot;</p>
+            </div>
+        </div>
+        </div>
+    
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) --> 
+<script src="js/jquery-3.2.1.min.js"></script> 
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/popper.min.js"></script> 
+<script src="js/bootstrap-4.0.0.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>株式会社　H　保険</title>
+<!-- Bootstrap -->
+<link th:href="@{/css/customer.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="a11">
+    <!-- 标题 -->
+
+    <div class="title">保険情報検索</div>
+    <div class="a11_main">
+    <form th:action="@{/top/baoxiansousuo}" method="post">
+        <div class="row_container" >
+            <p class="row_title">検索条件</p>
+            <div class="row">
+                <div class="row_div">
+                    <div class="row_name">
+
+                        <ul>
+                            <li>　保険ID</li>
+                        </ul>
+                    </div>
+                    <textarea class="row_input" placeholder="2022100155021436" contenteditable name="HKID"></textarea>
+                </div>
+                <div class="row_div">
+                    <div class="row_name">
+                        <ul>
+                            <li>　保険名</li>
+                        </ul>
+                    </div>
+                    <textarea class="row_input" placeholder="生命保険" contenteditable name="HKN"></textarea>
+                </div>
+                <div class="row_div">
+                    <div class="row_name">
+                        <ul>
+                            <li>　保険共通区分</li>
+                        </ul>
+                    </div>
+                    <textarea class="row_input" placeholder="001" contenteditable name="HKKTKB"></textarea>
+                </div>
+                <div class="row_div">
+                    <div class="row_name">
+                        <ul>
+                            <li>　販売区分</li>
+                        </ul>
+                    </div>
+                    <select class="row_input" >
+                        <option value="1">すべで</option>
+                        <option value="2">オンライン</option>
+                        <option value="3">店頭</option>
+                        <option value="9">保留</option>
+                        <option value="0">販売終了</option>
+                    </select>
+                </div>
+                <div class="row_div">
+                    <div class="row_name">
+                        <ul>
+                            <li>　状態</li>
+                        </ul>
+                    </div>
+                    <select class="row_input" >
+                        <option value="0">すべで</option>
+                        <option value="1">準備中</option>
+                        <option value="2">有効</option>
+                        <option value="3">無効</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <input type="submit" class="text_s_bt"  value="検索"/>
+            </div>
+
+
+        </div>
+          </form>
+
+
+        <br>
+
+        <div class="row_title">保険情報</div>
+        <div>
+            <button class="text_s_bt" th:onclick="xin()">新規登録</button>
+        </div>
+        <div class="row">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>保険ID</th>
+                        <th>保険名</th>
+                        <th>保険共通区分</th>
+                        <th>販売区分</th>
+                        <th>状態</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="bianli:${select}">
+                        <td th:text="${bianli.HKID}"></td>
+                        <td th:text="${bianli.HKN}"></td>
+                        <td th:text="${bianli.HKKTKB}"></td>
+                        <td th:text="${bianli.HBKB}"></td>
+                        <td th:text="${bianli.STS}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr>
+
+        <div class="text-center">
+            <button class="text_bt"　th:onclick="fanhui()">戻る</button>
+        </div>
+        <div class="text-center">
+            <div class="text-center col-lg-6 offset-lg-3">
+                <p>Copyright &copy; H &middot; All Rights Reserved &middot;</p>
+            </div>
+        </div>
+        </div>
+
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap-4.0.0.js}"></script>
+
+<script th:inline="javascript">
+  function fanhui(){
+	  //跳转不到
+	  window.location.href="http://localhost:8885/top/show1";
+  }
+  function xin(){
+	  window.location.href="http://localhost:8885/top/xin";
+  }
+</script>
+</body>
+</html>

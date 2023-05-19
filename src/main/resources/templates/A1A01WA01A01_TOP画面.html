@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>株式会社 H 保険${id}</title>
+<!-- Bootstrap -->
+<link th:href="@{/css/customer.css}" rel="stylesheet">
+</head>
+<body>
+
+	<div class="a11">
+		<!-- 标题 -->
+		<div class="title">TOP画面</div>
+		<div class="a11_main">
+			<div class="row_container">
+				<p class="row_title">検索条件</p>
+				<div class="row">
+					<div class="row_div">
+						<div class="row_name">
+							<ul>
+								<li>年齢</li>
+							</ul>
+						</div>
+						<textarea class="row_input" placeholder="22" contenteditable></textarea>
+					</div>
+					<div class="row_div">
+						<div class=" row_name">
+							<ul>
+								<li><img th:src="@{/images/icon_required.gif}" alt="必須"></li>
+								<li>性別</li>
+							</ul>
+						</div>
+						<div class="row_input">
+							<ul>
+								<li><input type="radio" class="custom-control-input"
+									id="customRadio1" value="1" name="example1"> <label
+									class="custom-control-label" for="customRadio1">男性</label></li>
+								<li></li>
+								<li><input type="radio" class="custom-control-input"
+									id="customRadio2" value="2" name="example1"> <label
+									class="custom-control-label" for="customRadio2">女性</label></li>
+							</ul>
+
+						</div>
+					</div>
+
+				</div>
+				<div class="row_container">
+					<br>
+					<div>
+
+						<button class="text_ll_bt" th:onclick="dianji()">必要な保険を知りたい</button>
+						<button class="text_ll_bt" th:onclick="apply()">新規入会</button>
+						<button class="text_ll_bt" th:onclick="huiyuan()">ご会員さま</button>
+
+					</div>
+					<br>
+				</div>
+			</div>
+
+			<div class="text-center">
+				<div class="text-center col-lg-6 offset-lg-3">
+					<p>Copyright &copy; H &middot; All Rights Reserved &middot;</p>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script th:src="@{/js/popper.min.js}"></script>
+	<script th:src="@{/js/bootstrap-4.0.0.js}"></script>
+	<script th:inline="javascript">
+  function apply(){
+	  const id = /*[[${quanxian}]]*/{};
+	  console.log(id)
+	  window.location.href="http://localhost:8885/top/new";
+  }
+  function huiyuan(){
+	  const id = /*[[${quanxian}]]*/{};
+	  if(id==1){
+		  window.location.href="http://localhost:8885/top/sheyuan";
+	  }else if(id==0){
+		  window.location.href="http://localhost:8885/top/huiyuan";
+	  }else if(id==null){
+		  window.location.href="http://localhost:8885/login";
+	  }
+
+  }
+  function dianji(){
+	  const id = /*[[${quanxian}]]*/{};
+		var a= $('input[name="example1"]:checked').val();
+		if(id==null&& a!=null){
+			alert("请您先登录" );
+			 window.location.href="http://localhost:8885/login";
+		}else if(id==null&&a==null){
+				alert("请确认您是否登录，以及性别");
+		}else if(id!=null&&a==null){
+				alert("请选择性别");
+		}else{
+			if(id==1){
+				window.location.href="http://localhost:8885/top/baoxiansousuo";
+			}else if(id==0){
+				//拿性别
+				window.location.href="http://localhost:8885/top/osusume?sex="+a;
+			}
+		}
+
+  }
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demoXM.Dao.HokenDao">
+	<select id="getHoken"
+		resultType="com.example.demoXM.entity.Hoken">
+		SELECT HKID,
+		HKN,
+		HKSR,
+		HKKTKB,
+		HBFLG,
+		KTKYFLG
+		FROM hoken
+		WHERE
+		SEX=#{sex} AND (HBKB=1 OR HBKB=2) AND STS=2
+	</select>
+
+<!-- 	<select id="showall"
+		resultType="com.example.demoXM.entity.Hoken">
+		SELECT HKID,HKN,HKKTKB,HBKB,STS FROM hoken
+	</select>
+ -->
+	<select id="selectHoken" resultType="com.example.demoXM.entity.Hoken">
+		SELECT HKID,
+		HKN,
+		HKKTKB,
+		HBKB,
+		STS
+		FROM hoken
+		<where>
+			<if test="HKID!=null and HKID!=''">and HKID=#{HKID}</if>
+			<if test="HKN!=null and HKN!=''">and HKN=#{HKN}</if>
+			<if test="HKKTKB!=null and HKKTKB!=''" >and HKKTKB=#{HKKTKB}</if>
+			<!-- <if test="HBKB!=null and HBKB!=''">and HBKB=#{HBKB}</if>
+			<if test="STS!=null and STS!=''">and STS=#{STS}</if> -->
+		</where>
+	</select>
+
+
+
+</mapper>

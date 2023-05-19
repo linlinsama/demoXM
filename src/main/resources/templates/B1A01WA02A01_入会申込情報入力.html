@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>株式会社　H　保険</title>
+<!-- Bootstrap -->
+<link th:href="@{/css/customer.css}" rel="stylesheet">
+</head>
+<body>
+<div class="a11">
+    <!-- 标题 -->
+    <div class="title">お客様情報のご入力</div>
+
+    <!--  内容 -->
+        <div class="a11_main">
+            <hr>
+            <div class="row_container">
+                <p class="row_title">ログイン情報</p>
+
+                <div class="row">
+                    <div class="row_div">
+                        <div class="row_name">
+                            <ul >
+                                <li > <img th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>Ｅメール</li>
+                            </ul>
+                        </div>
+                         <textarea class="row_input" placeholder="yamata.taro@h.co.jp"  contenteditable></textarea>
+                    </div>
+                    <div class="row_div">
+                        <div class="row_name">
+                             <ul  >
+                                <li  > <img   th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>確認用再入力</li>
+                             </ul>
+                        </div>
+                        <textarea class="row_input"  placeholder="yamata.taro@h.co.jp" contenteditable></textarea>
+                    </div>
+                    <div class="row_div">
+                        <div class="row_name">
+                             <ul  >
+                                <li  > <img   th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>生年月日</li>
+                             </ul>
+                        </div>
+                        <textarea class="row_input"  placeholder="1980-12-31" contenteditable></textarea>
+                    </div>
+                    <div class="row_div">
+                        <div class="row_name">
+                             <ul >
+                                <li> <img   th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>携帯電話</li>
+                             </ul>
+                        </div>
+                        <textarea class="row_input"  placeholder="080-1234-5678" contenteditable></textarea>
+                    </div>
+                    <div class="row_div">
+                        <div class="row_name">
+                             <ul >
+                                <li> <img   th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>ログイン別名</li>
+                             </ul>
+                        </div>
+                        <textarea class="row_input"  placeholder="yamata.taro" contenteditable></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row_container">
+                <p class="row_title">本人情報</p>
+
+                <div class="row">
+
+                    <div class="row3_div">
+                        <div class="row_name">
+                            <ul>
+                                <li><img th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>姓</li>
+                            </ul>
+                        </div>
+                        <div class="row_input">
+                            <div class="custom-control  custom-control-inline">
+                                <textarea class="row_input" placeholder="ヤマダ" contenteditable></textarea>
+                            </div>
+                            <div class="custom-control  custom-control-inline">
+                                <textarea class="row_input" placeholder="山田"  contenteditable></textarea>
+                            </div>
+                            <div class="custom-control  custom-control-inline">
+                                <textarea class="row_input"  placeholder="yamada" contenteditable></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row3_div">
+                        <div class="row_name">
+                            <ul>
+                                <li><img   th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>名</li>
+                            </ul>
+                        </div>
+                        <div class="row_input">
+                            <div class="custom-control  custom-control-inline">
+                                <textarea class="row_input" placeholder="タロウ" contenteditable></textarea>
+                            </div>
+                            <div class="custom-control  custom-control-inline">
+                                <textarea class="row_input" placeholder="太郎" contenteditable></textarea>
+                            </div>
+                            <div class="custom-control  custom-control-inline">
+                                <textarea class="row_input" placeholder="taro" contenteditable></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row_div">
+                        <div class=" row_name">
+                            <ul>
+                                <li><img   th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>性別</li>
+                            </ul>
+                        </div>
+                        <div class="row_input">
+                            <ul>
+                                <li>
+                                    <input type="radio" class="custom-control-input" id="customRadio1" name="example1">
+                                    <label class="custom-control-label" for="customRadio1">男性</label>
+                                </li>
+                                <li>
+                                    　
+                                </li>
+                                <li>
+                                    <input type="radio" class="custom-control-input" id="customRadio2" name="example1">
+                                    <label class="custom-control-label" for="customRadio2">女性</label>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                    <div class="row_div">
+                        <div class="row_name">
+                            <ul>
+                                <li>　運転免許証</li>
+                            </ul>
+                        </div>
+                        <textarea class="row_input"  placeholder="501610103260" contenteditable></textarea>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row_container">
+                <p class="row_title">住所情報</p>
+
+                <div class="row">
+
+                    <div class="row_div">
+                        <div class="row_name">
+                            <ul>
+                                <li><img th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>郵便番号</li>
+                            </ul>
+                        </div>
+                        <textarea class="row_input"  placeholder="163-8001"  contenteditable></textarea>
+                    </div>
+
+                    <div class="row_div">
+                        <div class="row_name">
+                            <ul>
+                                <li><img   th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>都・道・府・県</li>
+                            </ul>
+                        </div>
+                        <select class="row_input" >
+                            <option>北海道</option>
+                            <option>東京都</option>
+                            <option>大阪府</option>
+                            <option>神奈川</option>
+                        </select>
+                    </div>
+                    <div class="row2_div">
+                        <div class="row2_name">
+                            <ul>
+                                <li><img th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>住所漢字</li>
+                            </ul>
+                        </div>
+                        <div class="row2_input">
+                            <div class="">
+                                <textarea class="row_input"  placeholder="新宿区西新宿" contenteditable></textarea>
+                            </div>
+                            <div class="">
+                                <textarea class="row_input"  placeholder="二丁目８番１号" contenteditable></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row2_div">
+                        <div class="row2_name">
+                            <ul>
+                                <li><img   th:src="@{/images/icon_required.gif}" alt="必須"></li>
+                                <li>住所カナ</li>
+                            </ul>
+                        </div>
+                        <div class="row2_input">
+                            <div>
+                                <textarea class="row_input" placeholder="シンジュクニシシンジュク" ></textarea>
+                            </div>
+                            <div>
+                                <textarea class="row_input" placeholder="２－８－１" contenteditable></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row_container">
+                <p class="row_title">勤務先情報</p>
+
+                <div class="row">
+
+                    <div class="row_div">
+                        <div class="row_name">
+                            <ul>
+                                <li>　業種</li>
+                            </ul>
+                        </div>
+                        <select class="row_input" >
+                            <option>農林水産</option>
+                            <option>土木建築</option>
+                            <option>製造</option>
+                            <option>電気・ガス・水道</option>
+                            <option>運輸・通信</option>
+                            <option>無職</option>
+                            <option>その他</option>
+                        </select>
+                    </div>
+
+                    <div class="row_div">
+                        <div class="row_name">
+                            <ul>
+                                <li>　勤務先名</li>
+                            </ul>
+                        </div>
+                        <textarea class="row_input" placeholder="株式会社　H" contenteditable></textarea>
+                    </div>
+
+                    <div class="row_div">
+                        <div class=" row_name">
+                            <ul>
+                                <li>　勤務先部課名</li>
+                            </ul>
+                        </div>
+                        <textarea class="row_input" placeholder="第一事業部" contenteditable></textarea>
+                    </div>
+                    <div class="row_div">
+                        <div class=" row_name">
+                            <ul>
+                                <li>　勤務先電話</li>
+                            </ul>
+                        </div>
+                        <textarea class="row_input"  placeholder="03-1111-2222" contenteditable></textarea>
+                    </div>
+                    <div class="row2_div">
+                        <div class="row2_name">
+                            <ul>
+                                <li>　勤務先住所</li>
+                            </ul>
+                        </div>
+                        <div class="row2_input">
+                            <div class="">
+                                <textarea class="row_input"  placeholder="新宿区東新宿" contenteditable></textarea>
+                            </div>
+                            <div class="">
+                                <textarea class="row_input"  placeholder="一丁目１番２号" contenteditable></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row_div">
+                        <div class=" row_name">
+                            <ul>
+                                <li>　入社年月</li>
+                            </ul>
+                        </div>
+                        <textarea class="row_input" placeholder="201004" contenteditable></textarea>
+                    </div>
+                </div>
+            </div>
+            <hr>
+
+              <div class="text-center">
+                <button class="text_bt">次へ進む</button>
+             </div>
+            <div class="text-center">
+                <div class="text-center col-lg-6 offset-lg-3">
+                    <p>Copyright &copy; H &middot; All Rights Reserved &middot;</p>
+                </div>
+            </div>
+        </div>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap-4.0.0.js}"></script>
+</body>
+</html>
