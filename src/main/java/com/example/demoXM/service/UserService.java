@@ -1,9 +1,9 @@
-package com.example.demoXM.Service;
+package com.example.demoXM.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demoXM.Dao.UserDao;
+import com.example.demoXM.dao.UserDao;
 
 @Service
 public class UserService {

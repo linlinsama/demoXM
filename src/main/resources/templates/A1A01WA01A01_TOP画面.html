@@ -50,11 +50,10 @@
 				<div class="row_container">
 					<br>
 					<div>
-
 						<button class="text_ll_bt" th:onclick="dianji()">必要な保険を知りたい</button>
 						<button class="text_ll_bt" th:onclick="apply()">新規入会</button>
 						<button class="text_ll_bt" th:onclick="huiyuan()">ご会員さま</button>
-
+						<button class="text_ll_bt" th:onclick="">登出</button>
 					</div>
 					<br>
 				</div>
@@ -74,44 +73,43 @@
 	<script th:src="@{/js/popper.min.js}"></script>
 	<script th:src="@{/js/bootstrap-4.0.0.js}"></script>
 	<script th:inline="javascript">
-  function apply(){
-	  const id = /*[[${quanxian}]]*/{};
-	  console.log(id)
-	  window.location.href="http://localhost:8885/top/new";
-  }
-  function huiyuan(){
-	  const id = /*[[${quanxian}]]*/{};
-	  if(id==1){
-		  window.location.href="http://localhost:8885/top/sheyuan";
-	  }else if(id==0){
-		  window.location.href="http://localhost:8885/top/huiyuan";
-	  }else if(id==null){
-		  window.location.href="http://localhost:8885/login";
-	  }
-
-  }
-  function dianji(){
-	  const id = /*[[${quanxian}]]*/{};
-		var a= $('input[name="example1"]:checked').val();
-		if(id==null&& a!=null){
-			alert("请您先登录" );
-			 window.location.href="http://localhost:8885/login";
-		}else if(id==null&&a==null){
-				alert("请确认您是否登录，以及性别");
-		}else if(id!=null&&a==null){
-				alert("请选择性别");
-		}else{
-			if(id==1){
-				window.location.href="http://localhost:8885/top/baoxiansousuo";
-			}else if(id==0){
-				//拿性别
-				window.location.href="http://localhost:8885/top/osusume?sex="+a;
-			}
+		function apply() {
+			const id = /*[[${quanxian}]]*/{};
+			console.log(id)
+			window.location.href = "http://localhost:8885/top/new";
 		}
+		function huiyuan() {
+			const id = /*[[${quanxian}]]*/{};
+			if (id == 1) {
+				window.location.href = "http://localhost:8885/top/sheyuan";
+			} else if (id == 0) {
+				window.location.href = "http://localhost:8885/top/huiyuan";
+			} else if (id == null) {
+				window.location.href = "http://localhost:8885/login";
+			}
 
-  }
+		}
+		function dianji() {
+			const id = /*[[${quanxian}]]*/{};
+			var a = $('input[name="example1"]:checked').val();
+			if (id == null && a != null) {
+				alert("请您先登录");
+				window.location.href = "http://localhost:8885/login";
+			} else if (id == null && a == null) {
+				alert("请确认您是否登录，以及性别");
+			} else if (id != null && a == null) {
+				alert("请选择性别");
+			} else {
+				if (id == 1) {
+					window.location.href = "http://localhost:8885/top/baoxiansousuo";
+				} else if (id == 0) {
+					//拿性别
+					window.location.href = "http://localhost:8885/top/osusume?sex="
+							+ a;
+				}
+			}
 
-
-</script>
+		}
+	</script>
 </body>
 </html>

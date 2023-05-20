@@ -15,7 +15,7 @@
 
     <div class="title">保険情報検索</div>
     <div class="a11_main">
-    <form th:action="@{/top/baoxiansousuo}" method="post">
+    <form th:action="@{/top/baoxiansousuo}" method="post" onsubmit="return validateForm()">
         <div class="row_container" >
             <p class="row_title">検索条件</p>
             <div class="row">
@@ -74,7 +74,7 @@
             </div>
 
             <div>
-                <input type="submit" class="text_s_bt"   value="検索"/>
+                <input type="submit" class="text_s_bt" value="検索"/><span style="color: red;" id="erruserpsw"></span>
             </div>
 
 
@@ -136,6 +136,23 @@
   }
   function xin(){
 	  window.location.href="http://localhost:8885/top/xin";
+  }
+  function validateForm() {
+      // 获取输入框的值
+      var hkid = document.getElementsByName("HKID")[0].value;
+      var hkn = document.getElementsByName("HKN")[0].value;
+      var hkktkb = document.getElementsByName("HKKTKB")[0].value;
+      console.log(1);
+      // 进行验证
+      if (hkid === "" && hkn === "" && hkktkb === "") {
+          document.getElementById("erruserpsw").innerHTML = "请至少输入一个搜索条件(保険ID,保険名,保険共通区分)";
+          return false;
+      }
+
+      console.log(11);
+      document.getElementById("erruserpsw").innerHTML = "";
+      // 所有验证通过
+      return true;
   }
 </script>
 </body>

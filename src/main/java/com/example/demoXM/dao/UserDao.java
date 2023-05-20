@@ -1,4 +1,4 @@
-package com.example.demoXM.Dao;
+package com.example.demoXM.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 
