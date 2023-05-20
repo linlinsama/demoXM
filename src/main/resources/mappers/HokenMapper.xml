@@ -33,8 +33,8 @@
 			<if test="HKID!=null and HKID!=''">and HKID=#{HKID}</if>
 			<if test="HKN!=null and HKN!=''">and HKN=#{HKN}</if>
 			<if test="HKKTKB!=null and HKKTKB!=''" >and HKKTKB=#{HKKTKB}</if>
-			<!-- <if test="HBKB!=null and HBKB!=''">and HBKB=#{HBKB}</if>
-			<if test="STS!=null and STS!=''">and STS=#{STS}</if> -->
+			<if test="HBKB!=null and HBKB!=''">and HBKB=#{HBKB}</if>
+			<if test="STS!=null and STS!=''">and STS=#{STS}</if>
 		</where>
 	</select>
 

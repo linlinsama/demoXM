@@ -25,8 +25,8 @@ public class HokenService {
 //	}
 
 	//按条件查询
-	public List<Hoken>selectHoken(String HKID, String HKN,String HKKTKB){
-		return hokenDao.selectHoken(HKID, HKN, HKKTKB);
+	public List<Hoken>selectHoken(String HKID, String HKN,String HKKTKB,String HBKB,String STS){
+		return hokenDao.selectHoken(HKID, HKN, HKKTKB,HBKB,STS);
 	}
 
 }

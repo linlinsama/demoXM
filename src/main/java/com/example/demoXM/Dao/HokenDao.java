@@ -17,5 +17,5 @@ public interface HokenDao {
 
 
 	//通过条件 在保险情报搜索页面里搜索
-	public List<Hoken> selectHoken(String HKID, String HKN,String HKKTKB);
+	public List<Hoken> selectHoken(String HKID, String HKN,String HKKTKB,String HBKB,String STS);
 }

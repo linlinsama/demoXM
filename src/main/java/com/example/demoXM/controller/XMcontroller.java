@@ -42,7 +42,7 @@ public class XMcontroller {
 	//未登录的情况
 
 	//登陆的情况/top/show?id=1
-	@GetMapping("/top/show")
+	@GetMapping("/show")
 	//把value的id拿到 给下面的integer id
 	public String show(@RequestParam(name="id",required=false) Integer id,Model model) {
 		System.out.println(id);
@@ -68,7 +68,7 @@ public class XMcontroller {
 	//是社员跳转到保险情报搜索
 	@GetMapping("/baoxiansousuo")
 	public String baoxiansousuo(Model model) {
-		List<Hoken>list2 =hokenService.selectHoken(null,null,null);
+		List<Hoken>list2 =hokenService.selectHoken(null,null,null,null,null);
 		for (Hoken hoken : list2) {
 			if(hoken.getHBKB().equals("1")) {
 				hoken.setHBKB("すべて");
@@ -89,9 +89,11 @@ public class XMcontroller {
 		return "E1F01WA02A01_保険情報検索";
 	}
 //带值搜索
-	@PostMapping("/top/baoxiansousuo")
-	public String selectHoken(Model model, String HKID, String HKN,String HKKTKB) {
-		List<Hoken>list3=hokenService.selectHoken(HKID, HKN, HKKTKB);
+	@PostMapping("/baoxiansousuo")
+	public String selectHoken(Model model, String HKID, String HKN,String HKKTKB,String HBKB,String STS) {
+		System.out.println(HBKB);
+		System.out.println(STS);
+		List<Hoken>list3=hokenService.selectHoken(HKID, HKN, HKKTKB,HBKB,STS);
 		for (Hoken hoken : list3) {
 			System.out.println(hoken);
 		}

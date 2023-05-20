@@ -50,8 +50,8 @@
                             <li>　販売区分</li>
                         </ul>
                     </div>
-                    <select class="row_input" >
-                        <option value="1">すべで</option>
+                    <select class="row_input" name="HBKB" >
+                        <option value="">すべで</option>
                         <option value="2">オンライン</option>
                         <option value="3">店頭</option>
                         <option value="9">保留</option>
@@ -64,8 +64,8 @@
                             <li>　状態</li>
                         </ul>
                     </div>
-                    <select class="row_input" >
-                        <option value="0">すべで</option>
+                    <select class="row_input" name="STS" >
+                        <option value="">すべで</option>
                         <option value="1">準備中</option>
                         <option value="2">有効</option>
                         <option value="3">無効</option>
@@ -74,7 +74,7 @@
             </div>
 
             <div>
-                <input type="submit" class="text_s_bt"  value="検索"/>
+                <input type="submit" class="text_s_bt"   value="検索"/>
             </div>
 
 
@@ -113,7 +113,7 @@
         <hr>
 
         <div class="text-center">
-            <button class="text_bt"　th:onclick="fanhui()">戻る</button>
+            <button class="text_bt" th:onclick="fanhui()">戻る</button>
         </div>
         <div class="text-center">
             <div class="text-center col-lg-6 offset-lg-3">
@@ -132,7 +132,7 @@
 <script th:inline="javascript">
   function fanhui(){
 	  //跳转不到
-	  window.location.href="http://localhost:8885/top/show1";
+	  window.location.href="http://localhost:8885/top/show"+a;
   }
   function xin(){
 	  window.location.href="http://localhost:8885/top/xin";
