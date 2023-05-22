@@ -9,11 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demoXM.entity.Hoken;
+import com.example.demoXM.entity.User;
 import com.example.demoXM.helper.SessionHelper;
 import com.example.demoXM.service.HokenService;
 
@@ -50,9 +50,13 @@ public class XMcontroller {
 	//登陆的情况/top/show?id=1
 	@GetMapping("/show")
 	//把value的id拿到 给下面的integer id
-	public String show(@RequestParam(name = "id", required = false) Integer id, Model model, HttpSession session) {
-		String role = SessionHelper.getSessionRole(session);
-		model.addAttribute("id", role);
+	public String show( Model model, HttpSession session) {
+		User user = SessionHelper.getSessionRole(session);
+			if(user==null) {
+				return "A1A01WA01A01_TOP画面";
+			}
+		model.addAttribute("quanxian", user.getSYIKUBUN());
+		System.out.println(user.getSYIKUBUN());
 		//点击id==1点击ご会員 就跳转a
 		return "A1A01WA01A01_TOP画面";
 		//如果是社员 就跳转到b
@@ -103,6 +107,21 @@ public class XMcontroller {
 		List<Hoken> list3 = hokenService.selectHoken(HKID, HKN, HKKTKB, HBKB, STS);
 		for (Hoken hoken : list3) {
 			System.out.println(hoken);
+			if (hoken.getHBKB().equals("1")) {
+				hoken.setHBKB("すべて");
+			} else if (hoken.getHBKB().equals("2")) {
+				hoken.setHBKB("オンライン");
+			} else {
+				hoken.setHBKB("店頭");
+			}
+			if (hoken.getSTS().equals("1")) {
+				hoken.setSTS("準備中");
+			} else if (hoken.getSTS().equals("2")) {
+				hoken.setSTS("有効");
+			} else {
+				hoken.setSTS("無効");
+			}
+
 		}
 		model.addAttribute("select", list3);
 		return "E1F01WA02A01_保険情報検索";
@@ -136,8 +155,26 @@ public class XMcontroller {
 
 	//跳转到新规
 	@GetMapping("/xin")
-	public String xingui(@RequestBody Hoken hoken) {
+	public String xingui() {
 		return "E1F01WA01A04_保険情報登録変更";
+	}
+
+	@PostMapping("/hoken")
+	public String addHoken( Hoken hoken,HttpSession session,Model model) {
+	User user=	SessionHelper.getSessionRole(session);
+		int code = hokenService.addHoken(hoken,user);
+		baoxiansousuo(model);
+		System.out.println(code);
+		System.out.println(hoken.toString());
+		return "E1F01WA02A01_保険情報検索";
+	}
+
+	//详情
+	@GetMapping("/xiangqin")
+	public String xiangQing(String HKID,Model model) {
+		List<Hoken> list=hokenService.selectId(HKID);
+		model.addAttribute("souid",list);
+		return "E1F01WA02A02_保険情報詳細";
 	}
 
 }

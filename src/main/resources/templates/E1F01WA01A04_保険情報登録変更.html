@@ -14,8 +14,11 @@
 
 	<div class="a11">
 		<!-- 标题 -->
+
 		<div class="title">保険情報新規</div>
+
 		<div class="a11_main">
+		 <form th:action="@{/top/hoken}" method="post">
 			<div class="row_container">
 				<p class="row_title">保険</p>
 				<div class="row">
@@ -36,7 +39,7 @@
 								<li>保険番号</li>
 							</ul>
 						</div>
-						<textarea class="row_input" name="HKID" placeholder="00" contenteditable></textarea>
+						<textarea class="row_input" placeholder="00" contenteditable></textarea>
 					</div>
 					<div class="row_div">
 						<div class="row_name">
@@ -55,13 +58,13 @@
 							</ul>
 						</div>
 						<select class="row_input" name="HKSR">
-							<option>生命保険・死亡保険</option>
-							<option>医療保険・入院保険</option>
-							<option>旅行の保険</option>
-							<option>火災保険</option>
-							<option>地震保険</option>
-							<option>自動車保険</option>
-							<option>自転車保険</option>
+							<option value="01">生命保険・死亡保険</option>
+							<option value="02">医療保険・入院保険</option>
+							<option value="03">旅行の保険</option>
+							<option value="04">火災保険</option>
+							<option value="05">地震保険</option>
+							<option value="06">自動車保険</option>
+							<option value="07">自転車保険</option>
 						</select>
 					</div>
 					<div class="row_div">
@@ -81,11 +84,11 @@
 							</ul>
 						</div>
 						<select class="row_input" name="HBKB">
-							<option>すべで</option>
-							<option>オンライン</option>
-							<option>店頭</option>
-							<option>保留</option>
-							<option>販売終了</option>
+							<option value="1">すべで</option>
+							<option value="2">オンライン</option>
+							<option value="3">店頭</option>
+							<option value="9">保留</option>
+							<option value="0">販売終了</option>
 						</select>
 					</div>
 					<div class="row_div">
@@ -96,8 +99,8 @@
 							</ul>
 						</div>
 						<select class="row_input" name="HBFLG">
-							<option>該当しない</option>
-							<option>該当</option>
+							<option value="0">該当しない</option>
+							<option value="1">該当</option>
 						</select>
 					</div>
 					<div class="row_div">
@@ -108,8 +111,8 @@
 							</ul>
 						</div>
 						<select class="row_input" name="KTKYFLG">
-							<option>該当しない</option>
-							<option>該当</option>
+							<option value="0">該当しない</option>
+							<option value="1">該当</option>
 						</select>
 					</div>
 					<div class="row_div">
@@ -119,10 +122,10 @@
 								<li>支払方式</li>
 							</ul>
 						</div>
-						<select class="row_input" name="HKSR">
-							<option>年次</option>
-							<option>月次</option>
-							<option>年次</option>
+						<select class="row_input" name="TSKFLGZF">
+							<option value="03">年次</option>
+							<option value="02">月次</option>
+							<option value="01">日次</option>
 						</select>
 					</div>
 					<div class="row_div">
@@ -132,10 +135,12 @@
 								<li>契約方式</li>
 							</ul>
 						</div>
-						<select class="row_input" name="HKSR">
-							<option>年次</option>
-							<option>月次</option>
-							<option>年次</option>
+						<select class="row_input" name="TSKFLGQY">
+							<option value="01">1日</option>
+							<option value="02">1ヶ月</option>
+							<option value="03">3ヶ月</option>
+							<option value="04">1年</option>
+							<option value="05">５年</option>
 						</select>
 					</div>
 					<div class="row_div">
@@ -145,7 +150,7 @@
 								<li>料金額(円)</li>
 							</ul>
 						</div>
-						<textarea class="row_input" name="HKSR" placeholder="35,000" contenteditable></textarea>
+						<textarea class="row_input" name="RHN" placeholder="35,000" contenteditable></textarea>
 					</div>
 					<div class="row_div">
 						<div class="row_name">
@@ -155,9 +160,9 @@
 							</ul>
 						</div>
 						<select class="row_input" name="STS">
-							<option>準備中</option>
-							<option>有効</option>
-							<option>無効</option>
+							<option value="1">準備中</option>
+							<option value="2">有効</option>
+							<option value="3">無効</option>
 						</select>
 					</div>
 					<div class="row_div">
@@ -167,7 +172,7 @@
 								<li>検索用年齢S</li>
 							</ul>
 						</div>
-						<textarea class="row_input" name="HKSR" placeholder="18" contenteditable></textarea>
+						<textarea class="row_input" name="NRS" placeholder="18" contenteditable></textarea>
 					</div>
 					<div class="row_div">
 						<div class="row_name">
@@ -176,7 +181,7 @@
 								<li>検索用年齢E</li>
 							</ul>
 						</div>
-						<textarea class="row_input" name="HKSR" placeholder="80" contenteditable></textarea>
+						<textarea class="row_input" name="NRE" placeholder="80" contenteditable></textarea>
 					</div>
 					<div class="row_div">
 						<div class=" row_name">
@@ -187,10 +192,10 @@
 						</div>
 						<div class="row_input">
 							<ul>
-								<li><input type="radio" class="custom-control-input" id="customRadio1" name="SEX">
+								<li><input type="radio" class="custom-control-input" id="customRadio1" name="SEX" value="1">
 									<label class="custom-control-label" for="customRadio1">男性</label></li>
 								<li></li>
-								<li><input type="radio" class="custom-control-input" id="customRadio2" name="SEX">
+								<li><input type="radio" class="custom-control-input" id="customRadio2" name="SEX" value="2">
 									<label class="custom-control-label" for="customRadio2">女性</label></li>
 							</ul>
 						</div>
@@ -202,6 +207,7 @@
 				<button class="text_l_bt">登録</button>
 				<button class="text_l_bt">新規保険紹介</button>
 			</div>
+			</form>
 			<div class="text-center">
 				<div class="text-center col-lg-6 offset-lg-3">
 					<p>Copyright &copy; H &middot; All Rights Reserved &middot;</p>

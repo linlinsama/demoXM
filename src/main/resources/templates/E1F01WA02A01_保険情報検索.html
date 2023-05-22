@@ -101,7 +101,7 @@
                 </thead>
                 <tbody>
                     <tr th:each="bianli:${select}">
-                        <td th:text="${bianli.HKID}"></td>
+                        <td ><a th:text="${bianli.HKID}" th:onclick="getid([[${bianli.HKID}]])"></a></td>
                         <td th:text="${bianli.HKN}"></td>
                         <td th:text="${bianli.HKKTKB}"></td>
                         <td th:text="${bianli.HBKB}"></td>
@@ -132,7 +132,7 @@
 <script th:inline="javascript">
   function fanhui(){
 	  //跳转不到
-	  window.location.href="http://localhost:8885/top/show"+a;
+	  window.location.href="http://localhost:8885/top/show";
   }
   function xin(){
 	  window.location.href="http://localhost:8885/top/xin";
@@ -153,6 +153,9 @@
       document.getElementById("erruserpsw").innerHTML = "";
       // 所有验证通过
       return true;
+  }
+  function getid(HKID){
+	  window.location.href="http://localhost:8885/top/xiangqin"+HKID;
   }
 </script>
 </body>

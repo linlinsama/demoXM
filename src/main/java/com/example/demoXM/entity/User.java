@@ -7,6 +7,7 @@ public class User {
 	private String lOGINN;
 	//密码
 	private String PASS;
+
 	public String getSYIKUBUN() {
 		return SYIKUBUN;
 	}
@@ -23,6 +24,12 @@ public class User {
 		return PASS;
 	}
 	public void setPASS(String pASS) {
+		PASS = pASS;
+	}
+	public User(String sYIKUBUN, String lOGINN, String pASS) {
+		super();
+		SYIKUBUN = sYIKUBUN;
+		this.lOGINN = lOGINN;
 		PASS = pASS;
 	}
 

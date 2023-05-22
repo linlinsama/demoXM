@@ -18,4 +18,10 @@ public interface HokenDao {
 
 	//通过条件 在保险情报搜索页面里搜索
 	public List<Hoken> selectHoken(String HKID, String HKN,String HKKTKB,String HBKB,String STS);
+
+	//添加新规保险
+	public int addHoken(Hoken hoken);
+
+	//超链接a通过id查询15项
+	public List<Hoken> selectId(String HKID);
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demoXM.entity.User;
 import com.example.demoXM.helper.SessionHelper;
 import com.example.demoXM.service.UserService;
 
@@ -16,6 +17,7 @@ import com.example.demoXM.service.UserService;
 public class LoginController {
 	@Autowired
 	private UserService UserService;
+
 
 	//跳登录
 	@GetMapping("/login")
@@ -39,7 +41,8 @@ public class LoginController {
 			return "B1A01WA01A01_登録画面";
 		}
 		//登錄成功
-		SessionHelper.addSessionRole(session, role);
+		User user=new User(userid, userpsw, role);
+		SessionHelper.addSessionRole(session, user);
 		model.addAttribute("quanxian", role);
 		return "A1A01WA01A01_TOP画面";
 	}

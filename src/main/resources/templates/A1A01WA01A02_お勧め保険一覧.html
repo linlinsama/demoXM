@@ -42,7 +42,7 @@
         <hr>
 
         <div class="text-center">
-            <button class="text_bt" >戻る</button>
+            <button class="text_bt" th:onclick="goback()" >戻る</button>
         </div>
         <div class="text-center">
             <div class="text-center col-lg-6 offset-lg-3">
@@ -57,5 +57,10 @@
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script th:src="@{/js/popper.min.js}"></script>
 <script th:src="@{/js/bootstrap-4.0.0.js}"></script>
+<script th:inline="javascript">
+function goback(){
+	window.location.href = "http://localhost:8885/top/show";
+}
+</script>
 </body>
 </html>
