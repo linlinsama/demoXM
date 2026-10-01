@@ -3,3 +3,4 @@ oura_data/
 oura_report/
 *.token.json
 .oura_token.json
+__pycache__/
