@@ -1,0 +1,5 @@
+# Personal health data and credentials must never be committed.
+oura_data/
+oura_report/
+*.token.json
+.oura_token.json
