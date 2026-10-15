@@ -255,6 +255,21 @@ details[open] > summary::before { transform: rotate(45deg); }
 .thumb { height: 64px; width: auto; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); cursor: zoom-in; display: block; }
 .thumb.big { height: auto; max-height: 520px; cursor: zoom-out; }
 
+/* strength sets */
+.chk { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--ink-2); cursor: pointer; line-height: 1.5; }
+.chk input { width: 18px; height: 18px; margin: 2px 0 0; flex: none; accent-color: var(--btn); }
+.exs { display: grid; gap: 8px; }
+.ex { display: grid; gap: 6px; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); min-width: 0; }
+.ex-h { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.ex-h b { font-size: 14px; margin-right: auto; }
+.ex-cmp { font-size: 12px; color: var(--muted); }
+.sets { display: flex; flex-wrap: wrap; gap: 5px; }
+.set { font-family: var(--f-num); font-size: 15px; font-variant-numeric: tabular-nums; padding: 1px 8px; border-radius: 6px; background: var(--surface); border: 1px solid var(--line); white-space: nowrap; }
+.set i { font-style: normal; font-family: var(--f-body); font-size: 11px; color: var(--muted); margin-right: 4px; }
+.set.wu { color: var(--muted); }
+.set.skip { color: var(--muted); text-decoration: line-through; border-style: dashed; }
+.musc { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
 /* food */
 .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
 .day { display: grid; gap: 1px; justify-items: center; padding: 7px 2px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; min-width: 0; }
@@ -395,12 +410,12 @@ details[open] > summary::before { transform: rotate(45deg); }
             <label class="drop" for="trainFiles">
               <input type="file" id="trainFiles" class="vh" accept="image/*" multiple>
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/></svg>
-              <span>点击选择截图，也可以拖进来或直接粘贴<br><span class="hint">可多选：总览页、心率区间页、分段或动作记录</span></span>
+              <span>点击选择截图，也可以拖进来或直接粘贴<br><span class="hint">支持手表、Keep、训记等；同一次训练可多选几张</span></span>
             </label>
             <div class="previews" id="trainPreviews" hidden></div>
             <div class="grid2">
-              <label class="fld"><span>训练日期</span><input type="date" id="trainDate"></label>
-              <span></span>
+              <label class="fld wide"><span>训练日期 <em>（留空 = 读截图上的日期）</em></span><input type="date" id="trainDate"></label>
+              <label class="chk wide"><input type="checkbox" id="trainBatch"><span>每张图是一次单独的训练<br><span class="hint">一次导入多条历史记录（最多 10 张），已经记过的会自动跳过</span></span></label>
               <label class="fld wide"><span>补充说明 <em>（可选）</em></span><textarea id="trainNote" rows="2" maxlength="300" placeholder="例如：力量训练第 3 周，今天深蹲 50kg 5×5，膝盖有点不舒服"></textarea></label>
             </div>
             <div class="actions"><button type="button" class="btn primary" id="trainGo" data-ai="img">分析这次训练</button></div>
@@ -408,7 +423,11 @@ details[open] > summary::before { transform: rotate(45deg); }
           </div>
           <div class="card">
             <h2>怎么评</h2>
-            <p class="hint">Claude 会先把截图上的时长、消耗、心率、配速、组数等数据读出来，再结合你的年龄、体重、目标和最近几次训练，给出 0–100 分、强度判断、做得好和要改进的地方、下次训练的具体安排和练后吃什么。没在截图里出现的数据不会被编出来。</p>
+            <p class="hint">Claude 会先把截图上的数据读出来：跑步、骑行读时长、消耗、心率、配速；力量训练读每个动作的重量×次数，区分热身组和没完成的组。再结合你的档案和之前的训练，给出 0–100 分、和上次同一动作比有没有进步、要改进的地方、下次怎么练、练后吃什么。截图上没有的数据不会被编出来；计时忘了关这类明显不对的数字会被标出来并校正。</p>
+          </div>
+          <div class="card" id="liftCard" hidden>
+            <div class="card-h"><h2>主要动作进步</h2><span class="hint">每次最好的一组</span></div>
+            <div id="liftProg"></div>
           </div>
         </div>
         <div class="stack">
@@ -569,6 +588,7 @@ const md = s => { const [, m, d] = s.split('-').map(Number); return `${m}/${d}`;
 const wd = s => '周' + '日一二三四五六'[new Date(dayNum(s) * 864e5).getUTCDay()];
 const hm = t => { const d = new Date(t); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 const thisYear = () => new Date().getFullYear();
+const validDate = d => isDate(d) && d <= today() && d >= addDays(today(), -1100) ? d : null;
 function defaultMeal() { const h = new Date().getHours(); return h < 10 ? '早餐' : h < 14 ? '午餐' : h < 17 ? '加餐' : h < 21 ? '晚餐' : '加餐'; }
 
 /* ---------- state ---------- */
@@ -653,6 +673,7 @@ const workoutsOf = (pid, list = S.workouts) => list.filter(w => w.pid === pid).s
 const workoutsOn = (pid, date, list = S.workouts) => list.filter(w => w.pid === pid && w.date === date);
 function exKcal(r, bmr) {
   if (!r) return 0;
+  const c = num(r.kcalEstimate); if (c != null) return Math.max(0, c);
   const a = num(r.activeKcal); if (a != null) return Math.max(0, a);
   const t = num(r.totalKcal); if (t != null) return Math.max(0, t - (bmr || 0) / 1440 * (num(r.durationMin) || 0));
   return 0;
@@ -686,6 +707,60 @@ function intake(pid, date, list = S.meals) {
   return r;
 }
 
+/* ---------- strength training ---------- */
+function normExercises(a) {
+  return (Array.isArray(a) ? a : []).map(e => ({
+    name: str(e?.name, 40),
+    sets: (Array.isArray(e?.sets) ? e.sets : []).map(x => {
+      const w = num(x?.w), r = num(x?.r);
+      return {
+        w: w != null && w >= 0 && w < 1000 ? Math.round(w * 100) / 100 : null, r: r != null && r >= 0 && r < 1000 ? Math.round(r) : null,
+        t: ['warmup', 'work', 'skipped'].includes(x?.t) ? x.t : 'work', s: str(x?.s, 24).replace(/^热\s*/, ''),
+      };
+    }).filter(x => x.w != null || x.r != null || x.s).slice(0, 15),
+  })).filter(e => e.name && e.sets.length).slice(0, 15);
+}
+const exKey = n => String(n || '').replace(/\s+/g, '').toLowerCase();
+const kgTxt = w => String(+w.toFixed(2));
+const setText = x => x.s || (x.w > 0 ? `${kgTxt(x.w)}kg×${x.r ?? '?'}` : `${x.r ?? '?'}次`);
+const e1rm = x => x.w > 0 && x.r > 0 ? x.w * (1 + Math.min(x.r, 30) / 30) : null;
+const setScore = x => x ? (x.w > 0 ? e1rm(x) : (x.r || 0)) : null;
+function bestSet(ex) {
+  const work = (ex?.sets || []).filter(x => x.t === 'work' && (x.r || 0) > 0);
+  if (!work.length) return null;
+  const loaded = work.filter(x => x.w > 0);
+  return (loaded.length ? loaded : work).reduce((a, b) => setScore(b) > setScore(a) ? b : a);
+}
+const olderThan = (a, b) => a.date < b.date || (a.date === b.date && (a.createdAt || 0) < (b.createdAt || 0));
+function prevExercise(w, name) {
+  const k = exKey(name);
+  for (const x of workoutsOf(w.pid).filter(x => x.id !== w.id && olderThan(x, w))) {
+    const ex = normExercises(x.result?.exercises).find(e => exKey(e.name) === k);
+    if (ex && bestSet(ex)) return { w: x, ex };
+  }
+  return null;
+}
+function liftHistory(list) {
+  const seen = new Map();
+  for (const w of [...list].sort(sortWo)) for (const ex of normExercises(w.result?.exercises)) {
+    const b = bestSet(ex); if (!b) continue;
+    const k = exKey(ex.name), v = seen.get(k) || { name: ex.name, items: [] };
+    if (v.items.length < 3) v.items.push(`${md(w.date)} ${setText(b)}（正式组 ${ex.sets.filter(x => x.t === 'work').length} 组）`);
+    seen.set(k, v);
+  }
+  return [...seen.values()].slice(0, 20).map(v => `- ${v.name}：${v.items.join('；')}`).join('\n') || '暂无';
+}
+// Duplicate detection: same screenshot date plus the same total volume (or same kcal and duration).
+function sameKey(a, b) {
+  if (!a?.date || !b?.date || a.date !== b.date) return false;
+  const close = (x, y, t) => x != null && y != null && Math.abs(x - y) <= t;
+  if (a.vol != null && b.vol != null) return close(a.vol, b.vol, 1);
+  if (a.kcal != null && b.kcal != null) return close(a.kcal, b.kcal, 1) && (a.min == null || b.min == null || close(a.min, b.min, 1));
+  return false;
+}
+const keyOf = r => ({ date: validDate(r?.date), vol: num(r?.totalVolumeKg), kcal: num(r?.activeKcal) ?? num(r?.totalKcal), min: num(r?.durationMin) });
+const keyOfRec = w => { const k = keyOf(w.result); return { ...k, date: k.date || w.date }; };
+
 /* ---------- AI result normalisers ---------- */
 function normWorkout(o) {
   o = o && typeof o === 'object' && !Array.isArray(o) ? o : {};
@@ -695,6 +770,8 @@ function normWorkout(o) {
     avgHr: num(o.avgHr), maxHr: num(o.maxHr), distanceKm: num(o.distanceKm),
     metrics: Array.isArray(o.metrics) ? o.metrics.map(m => ({ label: str(m?.label, 20), value: str(m?.value, 40) })).filter(m => m.label && m.value).slice(0, 12) : [],
     hrZones: zones, score: clamp(Math.round(num(o.score) ?? 0), 0, 100),
+    date: validDate(o.date), totalVolumeKg: num(o.totalVolumeKg), kcalEstimate: num(o.kcalEstimate),
+    muscles: strs(o.muscles, 12, 12), exercises: normExercises(o.exercises), warnings: strs(o.warnings, 3, 200),
     intensity: ['低', '中', '中高', '高'].includes(o.intensity) ? o.intensity : '中',
     verdict: str(o.verdict, 120), goodPoints: strs(o.goodPoints), improvements: strs(o.improvements),
     goalImpact: str(o.goalImpact, 600), nextSession: str(o.nextSession, 700), recovery: str(o.recovery, 600),
@@ -749,39 +826,55 @@ function ledgerText(e) {
 }
 function woLine(w) {
   const r = w.result || {};
-  return `- ${w.date} ${r.activity || '训练'}｜${r.durationMin != null ? Math.round(r.durationMin) + ' 分钟' : '时长未知'}｜活动消耗 ${r.activeKcal ?? r.totalKcal ?? '未知'} kcal｜平均心率 ${r.avgHr ?? '未知'}｜强度 ${r.intensity || '?'}｜评分 ${r.score ?? '?'}`;
+  return `- ${w.date} ${r.activity || '训练'}｜${r.durationMin != null ? Math.round(r.durationMin) + ' 分钟' : '时长未知'}｜消耗 ${r.kcalEstimate ?? r.activeKcal ?? r.totalKcal ?? '未知'} kcal${num(r.totalVolumeKg) != null ? `｜总重量 ${Math.round(r.totalVolumeKg)} kg` : ''}${r.avgHr != null ? `｜平均心率 ${r.avgHr}` : ''}｜强度 ${r.intensity || '?'}｜评分 ${r.score ?? '?'}`;
 }
-function workoutPrompt(pid, date, n, note) {
+function workoutPrompt(pid, date, n, note, hist = S.workouts) {
   const age = ageOf(prof(pid)), hr = age ? 220 - age : null, z = k => Math.round(hr * k);
   const zones = hr ? `估算最大心率 ${hr}（220 − 年龄）。心率区间参考：Z1 ${z(.5)}–${z(.6)}，Z2 ${z(.6)}–${z(.7)}，Z3 ${z(.7)}–${z(.8)}，Z4 ${z(.8)}–${z(.9)}，Z5 ${z(.9)} 以上。截图自带心率区间时以截图为准。` : '年龄未填写，心率区间以截图为准。';
-  const recent = workoutsOf(pid).slice(0, 6).map(woLine).join('\n') || '暂无';
-  return `你是一位资深私人教练，懂运动生理学，也懂减脂和增肌营养。附上的 ${n} 张图片是${who(pid)}在 ${date} 这次训练结束后的记录截图（可能来自 Apple Watch、华为、小米、佳明、Keep、健身房器械屏幕或力量训练 App；多张图属于同一次训练）。
+  const older = hist.filter(w => w.pid === pid && (!date || w.date < date));
+  const recent = workoutsOf(pid, older).slice(0, 6).map(woLine).join('\n') || '暂无';
+  return `你是一位资深私人教练，懂运动生理学，也懂减脂和增肌营养。附上的 ${n} 张图片是${who(pid)}${date ? `在 ${date} ` : ''}这次训练结束后的记录截图（可能来自 Apple Watch、华为、小米、佳明、Keep、训记、健身房器械屏幕或其它力量训练 App；多张图属于同一次训练）。${date ? '' : '训练日期以截图为准。'}
 
 请做两件事：
 A. 准确读取截图上的数据。只填截图里真实出现的数字，不要估算或编造；读不到的字段填 null。
-B. 结合下面的个人档案和最近训练，给出详细、具体、能照着做的评价和指导。每条点评都要引用具体数据（例如"平均心率 152，处在 Z3"），不说空话。力量训练要关注动作、组数、次数、重量、组间休息和训练容量。
+B. 结合下面的个人档案和之前的训练，给出详细、具体、能照着做的评价和指导。每条点评都要引用具体数据（例如"平均心率 152，处在 Z3"或"深蹲 42.5kg×12，比上次多 2.5 kg"），不说空话。
+
+力量训练记录（训记、Keep、Fitbod 等）的读法：
+- 标"热"的是热身组；颜色变浅或变灰的组是计划了但没完成；"(4+4)kg" 表示两只 4 kg 哑铃，w 记 8；"15次" 这类没写重量的是自重动作，w 记 0；"lbs" 要换算成 kg（× 0.4536）。
+- 名字旁边的"N天"通常是累计训练天数，不是时长。截图上的"总重量"一般不含热身组和没完成的组。
+- 总耗时明显不合理时（例如 5 个动作却显示 3 小时以上，多半是练完忘了结束计时），在 warnings 里指出，并在 kcalEstimate 里按实际训练量估算消耗。
+力量训练的打分重点：主项重量或次数比之前有没有进步、正式组数和完成度、重量和次数是否匹配目标（某组能比计划多做很多次，说明重量偏轻）、有没有热身、肌群搭配和每周频率。
 
 【个人档案】
 ${profileText(pid, date)}
 ${zones}
 
-【最近训练（新 → 旧）】
+【之前的训练（新 → 旧）】
 ${recent}
+
+【各动作之前的最佳组（新 → 旧）】
+${liftHistory(older)}
 
 【本次补充说明】
 ${note || '无'}
 
 只输出一个 JSON 对象，不要输出其它文字：
 {
+  "date": "截图上的训练日期 YYYY-MM-DD，没有则 null",
   "activity": "运动类型，如 户外跑步 / 室内骑行 / 力量训练-臀腿 / 游泳 / HIIT",
   "durationMin": 训练时长（分钟）或 null,
-  "activeKcal": 活动消耗千卡（不含静息消耗）或 null,
-  "totalKcal": 总消耗千卡或 null,
+  "activeKcal": 截图上的活动消耗千卡（不含静息消耗）或 null,
+  "totalKcal": 截图上的总消耗千卡或 null,
+  "kcalEstimate": 截图上的消耗明显不可信时你估算的实际活动消耗，否则 null,
   "avgHr": 平均心率或 null,
   "maxHr": 最高心率或 null,
   "distanceKm": 距离（公里）或 null,
+  "totalVolumeKg": 截图上的总重量/训练容量（kg）或 null,
+  "muscles": ["主要练到的肌群，如 臀大肌、股四头肌、背阔肌"],
+  "exercises": [{"name": "杠铃深蹲", "sets": [{"w": 20, "r": 15, "t": "warmup", "s": "20kg×15"}, {"w": 40, "r": 12, "t": "work", "s": "40kg×12"}]}],
   "metrics": [{"label": "平均配速", "value": "6分12秒/公里"}],
   "hrZones": [{"zone": "Z2", "minutes": 12.5}],
+  "warnings": ["数据异常提醒"],
   "score": 0 到 100 的整数,
   "intensity": "低" 或 "中" 或 "中高" 或 "高",
   "verdict": "一句话总评，30 字以内",
@@ -792,12 +885,14 @@ ${note || '无'}
   "recovery": "练后恢复和饮食"
 }
 字段要求：
-- metrics：截图里其余有价值的数据（配速、步频、步幅、爬升、功率、训练负荷、有氧/无氧效果、恢复时间、最大摄氧量、动作×组数×次数×重量等），最多 12 条，value 保留原单位。
+- exercises：力量训练时按截图顺序列出每个动作和每一组；t 取 "warmup"（热身）、"work"（正式组）或 "skipped"（没完成）；w 是这一组的总重量（kg），r 是次数；s 是截图上这一组的写法（不含序号和"热"字）。不是力量训练就填 []。
+- metrics：截图里其余有价值的数据（配速、步频、步幅、爬升、功率、训练负荷、有氧/无氧效果、恢复时间、最大摄氧量等），最多 12 条，value 保留原单位；力量训练的组已经放在 exercises 里，不要重复。
+- warnings：数据有明显问题时写 1–2 条，没有就填 []。
 - hrZones：只有截图显示了各心率区间的时间才填，minutes 是该区间的分钟数；没有就填 []。
 - score：综合完成质量、强度和目标是否匹配、时长和训练量来打分，verdict 里体现理由。
 - goodPoints：2–4 条；improvements：2–4 条，每条说清楚问题、原因和具体改法。
 - goalImpact：60–120 字，说明这次训练对减脂/增肌/维持的作用。
-- nextSession：60–150 字，具体到哪天、什么项目、多长时间、心率区间或组数×次数×重量，要和最近训练衔接，避免同一肌群连续高强度。
+- nextSession：60–150 字，具体到哪天、什么项目、多长时间、心率区间或组数×次数×重量（力量训练写清每个动作下次用多重），要和之前的训练衔接，避免同一肌群连续高强度。
 - recovery：60–120 字，练后 2 小时内吃什么、补多少蛋白质和水、拉伸哪些部位、睡眠。
 如果图片不是运动记录，activity 填 "无法识别"，score 填 0，verdict 说明需要上传什么样的截图，数组留空。`;
 }
@@ -1028,7 +1123,38 @@ function renderToday() {
     `${ms.map(m => { const r = m.result || {}; return `<li><span class="tag">${esc(m.mealType)}</span><span class="what">${esc((r.items || []).slice(0, 4).map(i => i.name).join('、') || '—')}</span><span class="n">${fmtInt(r.totals?.kcal)} kcal</span></li>`; }).join('')}</ul>`;
 }
 
+function exercisesHTML(w) {
+  const exs = normExercises(w.result?.exercises);
+  if (!exs.length) return '';
+  return `<div class="exs">${exs.map(ex => {
+    const b = bestSet(ex), prev = b ? prevExercise(w, ex.name) : null, pb = prev && bestSet(prev.ex);
+    let cmp = '';
+    if (b && pb && (b.w > 0) === (pb.w > 0)) {
+      const a = setScore(pb), c = setScore(b), d = c - a, flat = b.w > 0 ? Math.abs(d) < 1 : d === 0;
+      cmp = `<span class="ex-cmp">上次 ${md(prev.w.date)}：${esc(setText(pb))}${b.w > 0 ? ` · 估算 1RM ${fmtInt(a)}→${fmtInt(c)} kg` : ''}</span><span class="chip ${flat ? '' : d > 0 ? 'good' : 'warn'}">${flat ? '持平' : d > 0 ? '进步' : '回落'}</span>`;
+    } else if (b && !prev) cmp = '<span class="ex-cmp">第一次记录</span>';
+    return `<div class="ex"><div class="ex-h"><b>${esc(ex.name)}</b>${cmp}</div><div class="sets">${ex.sets.map(x =>
+      `<span class="set ${x.t === 'warmup' ? 'wu' : x.t === 'skipped' ? 'skip' : ''}">${x.t === 'warmup' ? '<i>热</i>' : ''}${esc(setText(x))}${x.t === 'skipped' ? '<span class="vh">（没完成）</span>' : ''}</span>`).join('')}</div></div>`;
+  }).join('')}</div>`;
+}
+function renderLiftProg() {
+  const map = new Map();
+  for (const w of [...workoutsOf(S.pid)].reverse()) for (const ex of normExercises(w.result?.exercises)) {
+    const b = bestSet(ex); if (!b) continue;
+    const k = exKey(ex.name), m = map.get(k) || { name: ex.name, pts: [] };
+    m.pts.push({ date: w.date, b }); map.set(k, m);
+  }
+  $('#liftCard').hidden = !map.size;
+  const rows = [...map.values()].filter(m => m.pts.length >= 2 && m.pts.every(x => (x.b.w > 0) === (m.pts[0].b.w > 0)))
+    .sort((a, b) => b.pts.length - a.pts.length || a.name.localeCompare(b.name, 'zh')).slice(0, 10);
+  $('#liftProg').innerHTML = !rows.length ? '<p class="empty">同一个动作练过 2 次以上，这里就会列出它的变化。</p>' :
+    `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>动作</th><th class="r">次数</th><th>第一次</th><th>最近</th><th class="r">变化</th></tr></thead><tbody>${rows.map(m => {
+      const f = m.pts[0], l = m.pts[m.pts.length - 1], loaded = l.b.w > 0, d = setScore(l.b) - setScore(f.b), flat = loaded ? Math.abs(d) < 1 : d === 0;
+      return `<tr><td>${esc(m.name)}</td><td class="r">${m.pts.length}</td><td>${esc(setText(f.b))}<span class="sub">${md(f.date)}</span></td><td>${esc(setText(l.b))}<span class="sub">${md(l.date)}</span></td><td class="r"><span class="chip ${flat ? '' : d > 0 ? 'good' : 'warn'}">${flat ? '持平' : fmtDelta(d, 0) + (loaded ? ' kg' : ' 次')}</span></td></tr>`;
+    }).join('')}</tbody></table></div><p class="hint">取每次最好的一组，用估算 1RM（Epley 公式）比较；自重动作比次数。15 次以上的组只适合看趋势。</p>`;
+}
 function renderTrain() {
+  renderLiftProg();
   const list = workoutsOf(S.pid);
   $('#trainCount').textContent = list.length ? `最近 ${list.length} 次` : '';
   if (!S.loaded.workouts) { $('#trainList').innerHTML = `<div class="card"><p class="empty">${S.noHost || S.noDb ? '连接后显示训练记录。' : '正在同步…'}</p></div>`; return; }
@@ -1037,7 +1163,8 @@ function renderTrain() {
     const r = w.result || {};
     const kv = [
       ['时长', dur(r.durationMin)],
-      ['活动消耗', r.activeKcal != null ? `${fmtInt(r.activeKcal)}<small>kcal</small>` : r.totalKcal != null ? `${fmtInt(r.totalKcal)}<small>kcal 总</small>` : null],
+      [num(r.kcalEstimate) != null ? '消耗（校正）' : '活动消耗', num(r.kcalEstimate) != null ? `${fmtInt(num(r.kcalEstimate))}<small>kcal</small>` : r.activeKcal != null ? `${fmtInt(r.activeKcal)}<small>kcal</small>` : r.totalKcal != null ? `${fmtInt(r.totalKcal)}<small>kcal 总</small>` : null],
+      ['总重量', num(r.totalVolumeKg) != null ? `${fmtInt(num(r.totalVolumeKg))}<small>kg</small>` : null],
       ['平均心率', r.avgHr != null ? `${fmtInt(r.avgHr)}<small>bpm</small>` : null],
       ['最高心率', r.maxHr != null ? `${fmtInt(r.maxHr)}<small>bpm</small>` : null],
       ['距离', r.distanceKm != null ? `${fmt1(r.distanceKm)}<small>km</small>` : null],
@@ -1047,6 +1174,9 @@ function renderTrain() {
       <div class="wo-h">${ring(r.score)}<div class="wo-t"><h3>${esc(r.activity)}</h3><div class="muted">${wd(w.date)} ${md(w.date)} · 强度 <span class="chip ${ic}">${esc(r.intensity)}</span></div></div></div>
       ${r.verdict ? `<p class="verdict">${esc(r.verdict)}</p>` : ''}
       ${kv.length ? `<dl class="kv">${kv.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : ''}
+      ${strs(r.warnings, 3, 200).map(x => `<p class="note warn">${esc(x)}</p>`).join('')}
+      ${strs(r.muscles, 12, 12).length ? `<div class="musc"><span class="lbl">练到</span>${strs(r.muscles, 12, 12).map(m => `<span class="chip">${esc(m)}</span>`).join('')}</div>` : ''}
+      ${exercisesHTML(w)}
       ${zonesHTML(r.hrZones)}
       ${r.metrics?.length ? `<div class="mets">${r.metrics.map(m => `<span class="met"><span>${esc(m.label)}</span><b>${esc(m.value)}</b></span>`).join('')}</div>` : ''}
       <details data-id="${esc(w.id)}" ${S.open.has(w.id) ? 'open' : ''}><summary>详细评价和下次训练</summary><div class="secs">
@@ -1342,7 +1472,8 @@ function setupUploader(key, cap) {
   drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); addFiles(key, e.dataTransfer?.files || []); });
 }
 function addFiles(key, list) {
-  const u = UP[key], max = Math.min(u.cap, S.img?.maxCount || u.cap);
+  const u = UP[key], batch = key === 'train' && $('#trainBatch').checked;
+  const max = batch ? 10 : Math.min(u.cap, S.img?.maxCount || u.cap);
   const types = S.img?.mediaTypes || ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
   for (const f of [...list]) {
     if (!/^image\//.test(f.type)) { toast('只能上传图片', 'bad'); continue; }
@@ -1382,6 +1513,7 @@ function aiErrCopy(e) {
     image_rejected: '这张图片无法识别（格式不支持或太大），请换一张 JPG 或 PNG。', images_unavailable: '当前打开方式不能把图片发给 Claude。',
     refused: 'Claude 没有处理这次请求，请换一张图片或改一下说明。', empty_completion: 'AI 没有返回内容，请减少图片数量后再试。',
     invalid_json: 'AI 返回的内容不完整，请再点一次。', prompt_too_large: '内容太多了，请减少图片或说明文字。', cancelled: '已停止。',
+    save_failed: '保存失败，已经保存的记录不受影响，剩下的可以稍后再试。',
   })[e?.code] || '网络或服务暂时出错，请再试一次。';
 }
 async function runAI(key, fn) {
@@ -1392,14 +1524,15 @@ async function runAI(key, fn) {
   st.innerHTML = '<span class="spin" aria-hidden="true"></span><span class="st-t">等待 Claude 开始…</span><span class="st-s n">0 秒</span><button type="button" class="btn sm ghost">停止</button>';
   const tEl = $('.st-t', st), sEl = $('.st-s', st);
   $('button', st).onclick = () => ctl.abort();
-  const t0 = Date.now(); let chars = 0;
+  const t0 = Date.now(); let chars = 0, label = '';
+  const stage = t => { label = t || ''; chars = 0; tEl.textContent = label || 'Claude 正在看图分析…'; };
   const tick = setInterval(() => {
     const s = Math.round((Date.now() - t0) / 1000);
     sEl.textContent = s + ' 秒' + (chars ? ` · ${chars} 字` : '');
-    if (!chars && s >= 3) tEl.textContent = key === 'advice' || key === 'trend' ? 'Claude 正在思考…' : 'Claude 正在看图分析…';
+    if (!chars && s >= 3 && !label) tEl.textContent = key === 'advice' || key === 'trend' ? 'Claude 正在思考…' : 'Claude 正在看图分析…';
   }, 1000);
   try {
-    const r = await fn(ctl.signal, ({ text }) => { chars = text.length; tEl.textContent = 'Claude 正在写分析…'; });
+    const r = await fn(ctl.signal, ({ text }) => { chars = text.length; tEl.textContent = label || 'Claude 正在写分析…'; }, stage);
     st.hidden = true;
     return r;
   } catch (e) {
@@ -1414,6 +1547,13 @@ async function runAI(key, fn) {
   } finally {
     clearInterval(tick); delete S.busy[key]; btn.disabled = false; applyAvailability();
   }
+}
+function showStatus(key, text, err) {
+  const st = $('#' + key + 'Status');
+  st.hidden = false; st.className = 'ai-status' + (err ? ' err' : '');
+  st.innerHTML = '<span class="st-t"></span><button type="button" class="btn sm ghost">关闭</button>';
+  $('.st-t', st).textContent = text;
+  $('button', st).onclick = () => { st.hidden = true; };
 }
 function aiReady(needImg) {
   if (!S.sample || S.aiOff) { toast(S.aiOff || 'AI 分析需要在 claude.ai 中打开这个页面', 'bad'); return false; }
@@ -1440,20 +1580,107 @@ async function save(fn) {
 }
 
 /* ---------- actions ---------- */
+const FATAL = ['cancelled', 'rate_limited', 'session_expired', 'images_unavailable', ...AI_HIDE];
+// Quick pass that reads only date / volume / kcal / duration, used to order a batch and to skip duplicates cheaply.
+async function readKeys(files, signal, together) {
+  const per = together ? files.length : Math.max(1, S.img?.maxCount || 1), out = [];
+  const norm = o => o && typeof o === 'object' ? { date: validDate(o.date), vol: num(o.volumeKg), kcal: num(o.kcal), min: num(o.minutes) } : null;
+  for (let i = 0; i < files.length; i += per) {
+    const chunk = files.slice(i, i + per), n = chunk.length, one = together || n === 1;
+    let v = null;
+    try {
+      v = await S.sample.json(`附上的 ${n} 张图片是运动记录截图${together ? '，都属于同一次训练' : n > 1 ? '，每张是一次单独的训练' : ''}。只需要读出下面几个数字，不要分析。
+${one ? '只输出一个 JSON 对象' : `只输出一个 JSON 数组（按图片顺序，长度 ${n}），每个元素是一个对象`}：
+{"date": "截图上的训练日期 YYYY-MM-DD 或 null", "volumeKg": 总重量/训练容量（kg）或 null, "kcal": 消耗千卡或 null, "minutes": 总时长（分钟）或 null}
+读不到的填 null；只有月和日时年份按 ${thisYear()} 年。`, { images: chunk, signal, modelTier: 'quick' });
+    } catch (e) { if (FATAL.includes(e?.code)) throw e; console.warn('key read failed', e); }
+    const arr = Array.isArray(v) ? v : [v];
+    if (together) return [norm(arr[0])];
+    for (let j = 0; j < n; j++) out.push(norm(arr[j]));
+  }
+  return out;
+}
 async function analyzeWorkout() {
   const u = UP.train; if (!u.files.length) return toast('先选择训练截图', 'bad');
   if (!guardWrite() || !aiReady(true)) return;
-  const pid = S.pid, date = isDate($('#trainDate').value) ? $('#trainDate').value : today(), note = $('#trainNote').value.trim().slice(0, 300);
-  const files = u.files.map(f => f.file), prompt = workoutPrompt(pid, date, files.length, note);
-  const res = await runAI('train', (signal, onText) => S.sample.json(prompt, { images: files, signal, onText, modelTier: 'default' }));
-  if (!res) return;
-  const result = normWorkout(res);
-  const thumbs = (await Promise.all(files.slice(0, 2).map(f => makeThumb(f)))).filter(Boolean);
-  const ref = S.db.collection('workouts').doc();
-  if (!await save(() => ref.set({ pid, date, createdAt: Date.now(), note, thumbs, result }))) return;
-  S.open.add(ref.id); clearUploader('train'); $('#trainNote').value = '';
-  toast(result.activity === '无法识别' ? '没有识别出运动数据，看看卡片里的提示' : `分析完成：${result.score} 分`);
-  scrollWhenReady('wo-' + ref.id);
+  const pid = S.pid, batch = $('#trainBatch').checked, userDate = batch ? null : validDate($('#trainDate').value);
+  const note = $('#trainNote').value.trim().slice(0, 300), files = u.files.map(f => f.file);
+  const max = Math.min(4, S.img?.maxCount || 4);
+  if (!batch && files.length > max) return toast(`同一次训练最多 ${max} 张截图。如果是好几次训练，请勾选「每张图是一次单独的训练」`, 'bad');
+  const saved = [], done = new Set();
+  const hist = () => { const ids = new Set(S.workouts.map(w => w.id)); return [...S.workouts, ...saved.filter(w => !ids.has(w.id))]; };
+  const findDup = k => k?.date ? hist().find(w => w.pid === pid && sameKey(k, keyOfRec(w))) : null;
+  const saveOne = async (result, imgs, fallback) => {
+    const date = userDate || result.date || fallback || today();
+    const thumbs = (await Promise.all(imgs.slice(0, 2).map(f => makeThumb(f)))).filter(Boolean);
+    const ref = S.db.collection('workouts').doc(), doc = { pid, date, createdAt: Date.now(), note, thumbs, result };
+    if (!await save(() => ref.set(doc))) return null;
+    saved.push({ id: ref.id, ...doc });
+    return ref.id;
+  };
+  const showDup = w => {
+    clearUploader('train'); S.open.add(w.id);
+    showStatus('train', `${md(w.date)} 这次训练已经记过了，没有重复保存。`, false);
+    scrollWhenReady('wo-' + w.id);
+  };
+
+  if (!batch) {
+    const out = await runAI('train', async (signal, onText, stage) => {
+      stage('先核对这次训练有没有记过…');
+      const [k] = await readKeys(files, signal, true);
+      const dup = findDup(k);
+      if (dup) return { dup };
+      stage('');
+      const r = await S.sample.json(workoutPrompt(pid, userDate || k?.date || null, files.length, note, hist()), { images: files, signal, onText, modelTier: 'default' });
+      return { r, k };
+    });
+    if (!out) return;
+    if (out.dup) return showDup(out.dup);
+    const result = normWorkout(out.r);
+    if (result.activity === '无法识别') return showStatus('train', '没有认出运动数据：' + (result.verdict || '请上传运动结束后的总结页截图'), true);
+    const dup = findDup(keyOf(result));
+    if (dup) return showDup(dup);
+    const id = await saveOne(result, files, out.k?.date);
+    if (!id) return;
+    S.open.add(id); clearUploader('train'); $('#trainNote').value = '';
+    toast(`分析完成：${result.score} 分`);
+    scrollWhenReady('wo-' + id);
+    return;
+  }
+
+  const out = await runAI('train', async (signal, onText, stage) => {
+    stage(`正在读取 ${files.length} 张截图的日期，去掉重复的…`);
+    const keys = await readKeys(files, signal, false);
+    const uniq = []; let dups = 0, fails = 0;
+    files.forEach((f, i) => {
+      const k = keys[i];
+      if (k && (findDup(k) || uniq.some(x => sameKey(x.k, k)))) { dups++; done.add(f); }
+      else uniq.push({ f, k, i });
+    });
+    uniq.sort((a, b) => (a.k?.date || '9999').localeCompare(b.k?.date || '9999') || a.i - b.i);
+    for (let j = 0; j < uniq.length; j++) {
+      const it = uniq[j], d = it.k?.date || null;
+      stage(`正在分析第 ${j + 1}/${uniq.length} 次${d ? `（${md(d)}）` : ''}…`);
+      let r;
+      try { r = await S.sample.json(workoutPrompt(pid, d, 1, note, hist()), { images: [it.f], signal, onText, modelTier: 'default' }); }
+      catch (e) { if (FATAL.includes(e?.code)) throw e; console.warn('batch item failed', e); fails++; continue; }
+      const result = normWorkout(r);
+      if (result.activity === '无法识别') { fails++; continue; }
+      if (findDup(keyOf(result))) { dups++; done.add(it.f); continue; }
+      if (!await saveOne(result, [it.f], d)) throw { code: 'save_failed' };
+      done.add(it.f);
+    }
+    return { dups, fails };
+  });
+  u.files = u.files.filter(x => { if (done.has(x.file)) { URL.revokeObjectURL(x.url); return false; } return true; });
+  renderPreviews('train');
+  if (!out) { if (saved.length) toast(`已经保存了 ${saved.length} 次训练`); return; }
+  $('#trainNote').value = '';
+  const parts = [`新增 ${saved.length} 次训练`];
+  if (out.dups) parts.push(`跳过重复 ${out.dups} 张`);
+  if (out.fails) parts.push(`${out.fails} 张没认出来，留在上面可以再试`);
+  showStatus('train', '导入完成：' + parts.join('，') + '。', !saved.length && out.fails > 0);
+  if (saved.length) scrollWhenReady('wo-' + saved[saved.length - 1].id);
 }
 async function analyzeMeal() {
   const u = UP.food; if (!u.files.length) return toast('先选择这顿饭的照片', 'bad');
@@ -1656,7 +1883,8 @@ function subscribe(db) {
 async function boot() {
   buildProfileForms();
   setupUploader('train', 4); setupUploader('food', 4); setupUploader('scale', 1);
-  $('#trainDate').value = today(); $('#trainDate').max = today();
+  $('#trainDate').max = today();
+  $('#trainBatch').addEventListener('change', () => { $('#trainGo').textContent = $('#trainBatch').checked ? '逐张分析并导入' : '分析这次训练'; });
   $('#wDate').value = today(); $('#wDate').max = today();
   fillProfileForms(true);
   renderAll(); applyAvailability();
